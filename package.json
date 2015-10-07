@@ -1,0 +1,36 @@
+{
+  "name": "teemo.js",
+  "version": "0.1.0",
+  "description": "Another league of legends API wrapper in node.js/iced.",
+  "main": "lib/teemo.js",
+  "scripts": {
+    "compile": "./node_modules/iced-coffee-script/bin/coffee -c -o lib src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicholastay/teemo.js.git"
+  },
+  "keywords": [
+    "League",
+    "of",
+    "Legends",
+    "LoL",
+    "api",
+    "wrapper",
+    "teemo"
+  ],
+  "author": "Nicholas Tay <nexerq@gmail.com> (http://nicholastay.github.io)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nicholastay/teemo.js/issues"
+  },
+  "homepage": "https://github.com/nicholastay/teemo.js#readme",
+  "devDependencies": {
+    "iced-coffee-script": "^108.0.8"
+  },
+  "dependencies": {
+    "request": "^2.64.0",
+    "xtend": "^4.0.0"
+  }
+}
