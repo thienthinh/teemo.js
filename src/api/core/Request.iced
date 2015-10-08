@@ -4,12 +4,21 @@ extend = require 'xtend'
 class exports.Request
     constructor: (@TeemoApi) ->
 
-    raw: (endpoint, options, cb) =>
+    raw: (endpoint, options..., cb) =>
+        # Optional options variable
+        options = options[0]
+
         return cb new Error 'No API key set, aborting request.' if not @TeemoApi.Settings.apiKey
+
+        if not options
+            qs = {api_key: @TeemoApi.Settings.apiKey}
+        else
+            qs = extend {api_key: @TeemoApi.Settings.apiKey}, options if options
+
         await request
             baseUrl: "https://#{@TeemoApi.Settings.region}.api.pvp.net"
             uri: endpoint
-            qs: extend {api_key: @TeemoApi.Settings.apiKey}, options 
+            qs: qs
         , defer err, res, body
         return cb err if err
 

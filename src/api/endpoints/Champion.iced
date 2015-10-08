@@ -18,6 +18,6 @@ class exports.Champion
 
     getChampionById: (id, cb) =>
         return cb new Error 'No champion ID given' if not id
-        await @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{id.toString()}", {}, defer err, resp
+        await @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{id.toString()}", defer err, resp
         return cb err if err
         return cb null, resp
