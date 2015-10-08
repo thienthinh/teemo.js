@@ -24,13 +24,16 @@ class exports.Request
         return cb err if err
 
         # Check for status codes
-        return cb new Error 'Bad request (HTTP status code 400)' if res.statusCode is 400
-        return cb new Error 'Unauthorized (HTTP status code 401)' if res.statusCode is 401
-        return cb new Error 'Forbidden (HTTP status code 403)' if res.statusCode is 403
-        return cb new Error 'Rate limit exceeded (HTTP status code 429)' if res.statusCode is 429
-        return cb new Error 'Internal server error (HTTP status code 500)' if res.statusCode is 500
-        return cb new Error 'Service unavailable (HTTP status code 503)' if res.statusCode is 503
-        return cb new Error "Request failed, status code returned: #{res.statusCode}" if res.statusCode isnt 200
+        switch res.statusCode
+            when 200 then break
+            when 400 then return @TeemoApi.Core.Debug.error 'Bad request (HTTP status code 400)', cb
+            when 401 then return @TeemoApi.Core.Debug.error 'Unauthorized (HTTP status code 401)', cb
+            when 403 then return @TeemoApi.Core.Debug.error 'Forbidden (HTTP status code 403)', cb
+            when 404 then return @TeemoApi.Core.Debug.error 'Not found (HTTP status code 404)', cb
+            when 429 then return @TeemoApi.Core.Debug.error 'Rate limit exceeded (HTTP status code 429)', cb
+            when 500 then return @TeemoApi.Core.Debug.error 'Internal server error (HTTP status code 500)', cb
+            when 503 then return @TeemoApi.Core.Debug.error 'Service unavailable (HTTP status code 503)', cb
+            else return @TeemoApi.Core.Debug.error "Request failed (not HTTP 200), status code returned: #{res.statusCode}", cb
 
         @TeemoApi.Core.Debug.success "#{endpoint} data returned"
         return cb null, JSON.parse body
