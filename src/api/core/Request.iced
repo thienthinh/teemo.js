@@ -15,6 +15,7 @@ class exports.Request
         else
             qs = extend {api_key: @TeemoApi.Settings.apiKey}, options
 
+        @TeemoApi.Core.Debug.info "Trying API request to #{endpoint}"
         await request
             baseUrl: "https://#{@TeemoApi.Settings.region}.api.pvp.net"
             uri: endpoint
@@ -31,4 +32,5 @@ class exports.Request
         return cb new Error 'Service unavailable (HTTP status code 503)' if res.statusCode is 503
         return cb new Error "Request failed, status code returned: #{res.statusCode}" if res.statusCode isnt 200
 
+        @TeemoApi.Core.Debug.success "#{endpoint} data returned"
         return cb null, JSON.parse body
