@@ -13,7 +13,7 @@ class exports.Request
         if not options
             qs = {api_key: @TeemoApi.Settings.apiKey}
         else
-            qs = extend {api_key: @TeemoApi.Settings.apiKey}, options if options
+            qs = extend {api_key: @TeemoApi.Settings.apiKey}, options
 
         await request
             baseUrl: "https://#{@TeemoApi.Settings.region}.api.pvp.net"
