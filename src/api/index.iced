@@ -9,10 +9,18 @@ module.exports = class TeemoApi
             region: 'na'
 
         @Settings = extend settings, options
+        @Core = {}
         
         # Load core modules (base requests, etc)
         for mod in fs.readdirSync path.resolve __dirname, 'core'
             continue if path.extname mod isnt '.js' or '.iced'
             modName = mod.replace('.js', '').replace('.iced', '')
             coreMod = require path.resolve __dirname, 'core', modName
-            @[modName] = new coreMod[modName] @
+            @.Core[modName] = new coreMod[modName] @
+
+        # Load endpoint modules
+        for mod in fs.readdirSync path.resolve __dirname, 'endpoints'
+            continue if path.extname mod isnt '.js' or '.iced'
+            modName = mod.replace('.js', '').replace('.iced', '')
+            endpointMod = require path.resolve __dirname, 'endpoints', modName
+            @[modName] = new endpointMod[modName] @
