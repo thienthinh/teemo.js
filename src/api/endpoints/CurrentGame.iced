@@ -20,7 +20,4 @@ class exports.CurrentGame
             version: '1.0'
             endpoint: "/observer-mode/rest/consumer/getSpectatorGameInfo/#{@platformId}"
 
-    getGameInfo: (summonerId, cb) =>
-        await @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{summonerId}", defer err, resp
-        return cb err if err
-        return cb null, resp
+    getGameInfo: (summonerId, cb) => @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{summonerId}", cb

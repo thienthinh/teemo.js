@@ -12,12 +12,8 @@ class exports.Champion
         qs = {}
         if options
             qs.freeToPlay = true if options.freeToPlay is true
-        await @TeemoApi.Core.Request.raw @info.endpoint, qs, defer err, resp
-        return cb err if err
-        return cb null, resp
+        @TeemoApi.Core.Request.raw @info.endpoint, qs, cb
 
     getChampionById: (id, cb) =>
         return cb new Error 'No champion ID given' if not id
-        await @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{id.toString()}", defer err, resp
-        return cb err if err
-        return cb null, resp
+        @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{id.toString()}", cb

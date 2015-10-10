@@ -6,13 +6,7 @@ class exports.LolStaticData
             version: '1.2'
             endpoint: "/api/lol/static-data/#{@TeemoApi.Settings.region}/v1.2"
 
-    get: (endpoint, options..., cb) =>
-        # Options variable is optional so we check here in the main function
-        options = options[0]
-        options = {} if not options
-        await @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}", options, defer err, resp
-        return cb err if err
-        return cb null, resp
+    get: (endpoint, options..., cb) => @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}", options, cb
 
     getChampions: (options..., cb) => @get '/champion', options, cb
     getChampionById: (id, options..., cb) => @get "/champion/#{id.toString()}", options, cb

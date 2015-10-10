@@ -7,10 +7,7 @@ class exports.Summoner
             endpoint: "/api/lol/#{@TeemoApi.Settings.region}/v1.4/summoner"
 
     # /summoner-v1.4 has no options
-    get: (endpoint, cb) =>
-        await @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}", defer err, resp
-        return cb err if err
-        return cb null, resp
+    get: (endpoint, cb) => @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}", cb
 
     getSummonersByName: (name, cb) => @get "/by-name/#{name}", cb
     getSummonersById: (id, cb) => @get "/#{id}", cb
