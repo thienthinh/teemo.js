@@ -1,6 +1,6 @@
 {
   "name": "teemo.js",
-  "version": "0.1.3",
+  "version": "0.1.5",
   "description": "Another league of legends library, written in nodejs/iced.",
   "main": "lib/teemo.js",
   "scripts": {
