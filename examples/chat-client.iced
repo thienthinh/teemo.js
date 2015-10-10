@@ -4,6 +4,7 @@ repl = require 'repl'
 lolChat = new Teemo.chat
     username: ''
     password: ''
+    autoAcceptFriendRequests: true
 
 
 # Events
@@ -14,7 +15,6 @@ lolChat.on 'error', (err) -> console.log 'ERROR: ' + err
 lolChat.on 'friendRequest', (from, name) ->
     name = from if not name
     console.log 'Accepting friend request from: ' + name
-    lolChat.acceptFriendRequest from
 
 # lolChat.on 'stanza', (stanza) ->
 #     console.log stanza

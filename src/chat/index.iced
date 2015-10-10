@@ -10,6 +10,7 @@ module.exports = class TeemoChat extends EventEmitter
             password: ''
             region: 'na'
             port: 5223
+            autoAcceptFriendRequests: false
 
         @Settings = extend settings, options
         # User can define their own platformid / server
@@ -72,7 +73,9 @@ module.exports = class TeemoChat extends EventEmitter
             # More specific stanza digging in, possibly league specific
             if stanza.is 'presence'
                 switch stanza.attrs.type
-                    when 'subscribe' then @.emit 'friendRequest', stanza.attrs.from, stanza.attrs.name
+                    when 'subscribe'
+                        @.emit 'friendRequest', stanza.attrs.from, stanza.attrs.name
+                        @acceptFriendRequest stanza.attrs.from if @Settings.autoAcceptFriendRequests
                     when 'unsubscribe' then @.emit 'unfriended', stanza.attrs.from
                     when 'unavailable' then @.emit 'wentOffline', stanza.attrs.from
             else if stanza.is 'message'
