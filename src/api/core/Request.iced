@@ -10,10 +10,9 @@ class exports.Request
 
         return cb new Error 'No API key set, aborting request.' if not @TeemoApi.Settings.apiKey
 
-        if not options
-            qs = {api_key: @TeemoApi.Settings.apiKey}
-        else
-            qs = extend {api_key: @TeemoApi.Settings.apiKey}, options
+        qs = {api_key: @TeemoApi.Settings.apiKey}
+        if options
+            qs = extend qs, options
 
         @TeemoApi.Core.Debug.info "Trying API request to #{endpoint}"
         await request

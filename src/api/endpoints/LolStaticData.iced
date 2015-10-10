@@ -6,7 +6,9 @@ class exports.LolStaticData
             version: '1.2'
             endpoint: "/api/lol/static-data/#{@TeemoApi.Settings.region}/v1.2"
 
-    get: (endpoint, options..., cb) => @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}", options, cb
+    get: (endpoint, options, cb) =>
+        options = options[0]
+        @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}", options, cb
 
     # No ids/variables required to be passed
     getChampions: (options..., cb) => @get '/champion', options, cb
@@ -22,7 +24,8 @@ class exports.LolStaticData
 
 
     # Only get the data if the id variable is defined (otherwise stupid)
-    getWithIdIfExists: (id, options..., endpoint, cb) =>
+    getWithIdIfExists: (id, options, endpoint, cb) =>
+        options = options[0]
         return cb new Error 'No ID defined to lookup' if not id
         @get "#{endpoint}/#{id}", options, cb
 

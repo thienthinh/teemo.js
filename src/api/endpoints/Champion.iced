@@ -9,10 +9,7 @@ class exports.Champion
     getChampions: (options..., cb) =>
         # Optional argument 'options' (https://github.com/jashkenas/coffeescript/issues/1091)
         options = options[0]
-        qs = {}
-        if options
-            qs.freeToPlay = true if options.freeToPlay is true
-        @TeemoApi.Core.Request.raw @info.endpoint, qs, cb
+        @TeemoApi.Core.Request.raw @info.endpoint, options, cb
 
     getChampionById: (id, cb) =>
         return cb new Error 'No champion ID given' if not id
