@@ -28,6 +28,7 @@ module.exports = class TeemoChat extends EventEmitter
                     when 'ru' then @Settings.platformId = 'ru'
                     when 'lan' then @Settings.platformId = 'la1'
                     when 'las' then @Settings.platformId = 'las2'
+                    else @Settings.platformId = @Settings.region # idk, fallback so platformId is not undefined i guess
             @Settings.server = "chat.#{@Settings.platformId}.lol.riotgames.com"
 
         # Init event emitter
