@@ -6,6 +6,7 @@ jstoxml = require 'jstoxml'
 module.exports = class TeemoChat extends EventEmitter
     constructor: (options) ->
         settings =
+            debug: false
             username: ''
             password: ''
             region: 'na'
@@ -32,6 +33,10 @@ module.exports = class TeemoChat extends EventEmitter
         # Init event emitter
         EventEmitter.call @
 
+        # Debug logging module
+        debugmod = require './debug'
+        @Debug = new debugmod.Debug @
+
     connect: =>
         @Client = client = new xmppClient
             jid: @Settings.username + '@pvp.net'
@@ -41,8 +46,11 @@ module.exports = class TeemoChat extends EventEmitter
             reconnect: true
             legacySSL: true # riot uses legacy ssl xmpp
 
+        @Debug.info 'Connecting to League of Legends chat server...'
+
         client.on 'online', (data) =>
             @.emit 'connected', data
+            @Debug.success "Connected to chat servers as #{data.jid}."
             # Send presence
             presence = # Default presence for xml
                 body:
@@ -60,8 +68,14 @@ module.exports = class TeemoChat extends EventEmitter
 
             client.send new xmppClient.Stanza('presence', {type: 'available'}).c('show').t('chat').up().c('status').t(jstoxml.toXML(presence))
 
-        client.on 'error', (err) => @.emit 'error', err
-        client.on 'offline', => @.emit 'offline'
+        client.on 'error', (err) =>
+            @.emit 'error', err
+            @Debug.error err
+
+        client.on 'offline', =>
+            @.emit 'offline'
+            @Debug.info 'Offline from League of Legends chat.'
+
         client.on 'stanza', (stanza) =>
             @LastMessage = stanza # More of a debug thing
 
@@ -76,12 +90,21 @@ module.exports = class TeemoChat extends EventEmitter
                 switch stanza.attrs.type
                     when 'subscribe'
                         @.emit 'friendRequest', stanza.attrs.from, stanza.attrs.name
-                        @acceptFriendRequest stanza.attrs.from if @Settings.autoAcceptFriendRequests
-                    when 'unsubscribe' then @.emit 'unfriended', stanza.attrs.from
-                    when 'unavailable' then @.emit 'wentOffline', stanza.attrs.from
+                        if not stanza.attrs.name then from = stanza.attrs.from else from = stanza.attrs.from
+                        @Debug.info 'Received friend request from: ' + from
+                        if @Settings.autoAcceptFriendRequests
+                            @acceptFriendRequest stanza.attrs.from
+                            @Debug.info "Automatically accepted friend request from #{from} as per config"
+                    when 'unsubscribe'
+                        @.emit 'unfriended', stanza.attrs.from
+                        @Debug.info "#{stanza.attrs.from} unfriended this account"
+                    when 'unavailable'
+                        @.emit 'wentOffline', stanza.attrs.from
+                        @Debug.info "Friend #{stanza.attrs.from} has went offline"
             else if stanza.is 'message'
                 # stanza.children[0].children[0] is where the message data is, weird.
                 @.emit 'pm', stanza.attrs.from, stanza.children[0].children[0] if stanza.attrs.type is 'chat'
+                @Debug.log "Received message from #{stanza.attrs.from}: #{stanza.children[0].children[0]}"
 
     pm: (to, message) => # Private message send
         return new Error 'There is no client created to connect to League.' if not @Client
@@ -90,6 +113,7 @@ module.exports = class TeemoChat extends EventEmitter
             type: 'chat'
         stanza.c('body').t(message)
         @Client.send stanza
+        @Debug.log "Sent message to #{to}: #{message}"
 
     raw: (data) => # Raw xmpp.Stanza sends
         @Client.send data
@@ -98,3 +122,4 @@ module.exports = class TeemoChat extends EventEmitter
         @Client.send new xmppClient.Stanza 'presence',
             to: to
             type: 'subscribe'
+        @Debug.info 'Accepted friend request from: ' + to
