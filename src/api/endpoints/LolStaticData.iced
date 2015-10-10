@@ -8,18 +8,26 @@ class exports.LolStaticData
 
     get: (endpoint, options..., cb) => @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}", options, cb
 
+    # No ids/variables required to be passed
     getChampions: (options..., cb) => @get '/champion', options, cb
-    getChampionById: (id, options..., cb) => @get "/champion/#{id.toString()}", options, cb
     getItems: (options..., cb) => @get '/item', options, cb
-    getItemById: (id, options..., cb) => @get "/item/#{id.toString()}", options, cb
     getLanguageStrings: (options..., cb) => @get '/language-strings', options, cb
     getLanguages: (cb) => @get '/languages', cb
     getMapData: (options..., cb) => @get '/map', options, cb
     getMasteries: (options..., cb) => @get '/mastery', options, cb
-    getMasteryById: (id, options..., cb) => @get "/mastery/#{id.toString()}", options, cb
     getRealmData: (cb) => @get '/realm', cb
     getRunes: (options..., cb) => @get '/rune', options, cb
-    getRuneById: (id, options..., cb) => @get "/rune/#{id.toString()}", options, cb
     getSummonerSpells: (options..., cb) => @get '/summoner-spell', options, cb
-    getSummonerSpellById: (id, options..., cb) => @get "/summoner-spell/#{id.toString()}", options, cb
     getVersions: (cb) => @get '/versions', cb
+
+
+    # Only get the data if the id variable is defined (otherwise stupid)
+    getWithIdIfExists: (id, options..., endpoint, cb) =>
+        return cb new Error 'No ID defined to lookup' if not id
+        @get "#{endpoint}/#{id}", options, cb
+
+    getChampionById: (id, options..., cb) => @getWithIdIfExists id, options, '/champion', cb
+    getItemById: (id, options..., cb) => @getWithIdIfExists id, options, '/item', cb
+    getMasteryById: (id, options..., cb) => @getWithIdIfExists id, options, '/mastery', cb
+    getRuneById: (id, options..., cb) => @getWithIdIfExists id, options, '/rune', cb
+    getSummonerSpellById: (id, options..., cb) => @getWithIdIfExists id, options, '/summoner-spell', cb

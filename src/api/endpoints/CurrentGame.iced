@@ -20,4 +20,6 @@ class exports.CurrentGame
             version: '1.0'
             endpoint: "/observer-mode/rest/consumer/getSpectatorGameInfo/#{@platformId}"
 
-    getGameInfo: (summonerId, cb) => @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{summonerId}", cb
+    getGameInfo: (summonerId, cb) =>
+        return new Error 'No summoner ID given' if not summonerId
+        @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{summonerId}", cb
