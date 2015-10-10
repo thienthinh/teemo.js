@@ -1,9 +1,15 @@
 Teemo = require '../src/teemo.iced'
 repl = require 'repl'
 
+# Use command line args for user/pass
+if not process.argv[3]
+    console.log 'Usage: iced chat-client.iced <username> <password>'
+    process.exit 1
+
+
 lolChat = new Teemo.chat
-    username: ''
-    password: ''
+    username: process.argv[2]
+    password: process.argv[3]
     autoAcceptFriendRequests: true
 
 

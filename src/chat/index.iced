@@ -49,11 +49,11 @@ module.exports = class TeemoChat extends EventEmitter
                     profileIcon: 1
                     level: 30
                     statusMsg: 'Teemo.js by Nexerq'
-                    rankedWins: 777
+                    rankedWins: 777 # Not shown in new client
                     gameStatus: 'outOfGame'
-                    rankedLeagueName: 'github.com/nicholastay'
-                    rankedLeagueDivision: ''
-                    rankedLeagueTier: 'DIAMOND'
+                    rankedLeagueName: 'github.com/nicholastay' # Not shown in new client
+                    rankedLeagueDivision: '' # Not shown in new client
+                    rankedLeagueTier: 'DIAMOND' # Not shown in new client
 
             # Extend user presence options (directly into the body) if presence settings options are set
             presence.body = extend presence.body, @Settings.presence if @Settings.presence
@@ -61,6 +61,7 @@ module.exports = class TeemoChat extends EventEmitter
             client.send new xmppClient.Stanza('presence', {type: 'available'}).c('show').t('chat').up().c('status').t(jstoxml.toXML(presence))
 
         client.on 'error', (err) => @.emit 'error', err
+        client.on 'offline', => @.emit 'offline'
         client.on 'stanza', (stanza) =>
             @LastMessage = stanza # More of a debug thing
 
