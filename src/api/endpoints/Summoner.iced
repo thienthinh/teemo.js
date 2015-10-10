@@ -10,7 +10,7 @@ class exports.Summoner
     # Also has some stuff like /summoner/IDHERE/then_more_params so the more params is under afterId
     get: (id, endpoint, afterId, cb) =>
         return cb new Error 'No Name/ID defined to lookup' if not id
-        @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}/#{id}#{afterId}", cb
+        @TeemoApi.Core.Request.raw "#{@info.endpoint}#{endpoint}/#{id.toString()}#{afterId}", cb
 
     getSummonersByName: (name, cb) => @get name, '/by-name', '', cb
     getSummonersById: (id, cb) => @get id, '', '', cb

@@ -27,7 +27,7 @@ class exports.LolStaticData
     getWithIdIfExists: (id, options, endpoint, cb) =>
         options = options[0]
         return cb new Error 'No ID defined to lookup' if not id
-        @get "#{endpoint}/#{id}", options, cb
+        @get "#{endpoint}/#{id.toString()}", options, cb
 
     getChampionById: (id, options..., cb) => @getWithIdIfExists id, options, '/champion', cb
     getItemById: (id, options..., cb) => @getWithIdIfExists id, options, '/item', cb

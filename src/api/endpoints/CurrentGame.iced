@@ -22,4 +22,4 @@ class exports.CurrentGame
 
     getGameInfo: (summonerId, cb) =>
         return new Error 'No summoner ID given' if not summonerId
-        @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{summonerId}", cb
+        @TeemoApi.Core.Request.raw "#{@info.endpoint}/#{summonerId.toString()}", cb
