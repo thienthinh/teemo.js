@@ -1,6 +1,7 @@
 extend = require 'xtend'
 {EventEmitter} = require 'events'
 xmppClient = require 'node-xmpp-client'
+jstoxml = require 'jstoxml'
 
 module.exports = class TeemoChat extends EventEmitter
     constructor: (options) ->
@@ -39,4 +40,57 @@ module.exports = class TeemoChat extends EventEmitter
             reconnect: true
             legacySSL: true # riot uses legacy ssl xmpp
 
-        client.on 'online', => @.emit 'connected'
+        client.on 'online', (data) =>
+            @.emit 'connected', data
+            # Send presence
+            presence = # Default presence for xml
+                body:
+                    profileIcon: 1
+                    level: 30
+                    statusMsg: 'Teemo.js by Nexerq'
+                    rankedWins: 777
+                    gameStatus: 'outOfGame'
+                    rankedLeagueName: 'github.com/nicholastay'
+                    rankedLeagueDivision: ''
+                    rankedLeagueTier: 'DIAMOND'
+
+            # Extend user presence options (directly into the body) if presence settings options are set
+            presence.body = extend presence.body, @Settings.presence if @Settings.presence
+
+            client.send new xmppClient.Stanza('presence', {type: 'available'}).c('show').t('chat').up().c('status').t(jstoxml.toXML(presence))
+
+        client.on 'error', (err) => @.emit 'error', err
+        client.on 'stanza', (stanza) =>
+            @LastMessage = stanza # More of a debug thing
+
+            # XMPP basic types, if user wants to access that
+            @.emit 'stanza', stanza
+            @.emit 'error', stanza if stanza.attrs.type is 'error'
+            @.emit 'presence', stanza if stanza.is 'presence'
+            @.emit 'message', stanza if stanza.is 'message'
+
+            # More specific stanza digging in, possibly league specific
+            if stanza.is 'presence'
+                switch stanza.attrs.type
+                    when 'subscribe' then @.emit 'friendRequest', stanza.attrs.from, stanza.attrs.name
+                    when 'unsubscribe' then @.emit 'unfriended', stanza.attrs.from
+                    when 'unavailable' then @.emit 'wentOffline', stanza.attrs.from
+            else if stanza.is 'message'
+                # stanza.children[0].children[0] is where the message data is, weird.
+                @.emit 'pm', stanza.attrs.from, stanza.children[0].children[0] if stanza.attrs.type is 'chat'
+
+    pm: (to, message) => # Private message send
+        return new Error 'There is no client created to connect to League.' if not @Client
+        stanza = new xmppClient.Stanza 'message',
+            to: to
+            type: 'chat'
+        stanza.c('body').t(message)
+        @Client.send stanza
+
+    raw: (data) => # Raw xmpp.Stanza sends
+        @Client.send data
+
+    acceptFriendRequest: (to) =>
+        @Client.send new xmppClient.Stanza 'presence',
+            to: to
+            type: 'subscribe'
