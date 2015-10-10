@@ -1,0 +1,5 @@
+# Uncompiled files
+src
+
+# Mac
+.DS_Store
