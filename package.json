@@ -1,6 +1,6 @@
 {
   "name": "teemo.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Another league of legends library, written in nodejs/iced.",
   "main": "lib/teemo.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "iced-coffee-script": "^108.0.8"
   },
   "dependencies": {
+    "iced-runtime": "^1.0.3",
     "jstoxml": "^0.2.3",
     "node-xmpp-client": "^2.0.2",
     "request": "^2.64.0",
