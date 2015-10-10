@@ -12,6 +12,7 @@ lolChat.on 'error', (err) -> console.log 'ERROR: ' + err
 
 # Auto accept friend requests
 lolChat.on 'friendRequest', (from, name) ->
+    name = from if not name
     console.log 'Accepting friend request from: ' + name
     lolChat.acceptFriendRequest from
 
