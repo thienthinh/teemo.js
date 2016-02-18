@@ -103,9 +103,11 @@ module.exports = class TeemoChat extends EventEmitter
                         @.emit 'wentOffline', stanza.attrs.from
                         @Debug.info "Friend #{stanza.attrs.from} has went offline"
             else if stanza.is 'message'
-                # stanza.children[0].children[0] is where the message data is, weird.
-                @.emit 'pm', stanza.attrs.from, stanza.children[0].children[0] if stanza.attrs.type is 'chat'
-                @Debug.log "Received message from #{stanza.attrs.from}: #{stanza.children[0].children[0]}"
+                # stanza.children[last element].children[0] is where the message data is, weird.
+                message = stanza.children?[stanza.children?.length-1].children[0]
+                return if not message
+                @.emit 'pm', stanza.attrs.from, message if stanza.attrs.type is 'chat'
+                @Debug.log "Received message from #{stanza.attrs.from}: #{message}"
 
     pm: (to, message) => # Private message send
         return new Error 'There is no client created to connect to League.' if not @Client
